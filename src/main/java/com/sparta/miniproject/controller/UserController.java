@@ -4,10 +4,9 @@ import com.sparta.miniproject.model.User;
 import com.sparta.miniproject.repository.UserRepository;
 import com.sparta.miniproject.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,8 +23,14 @@ public class UserController {
 
         return userService.registerUser(requestDto);
     }
+    @Autowired
+    AuthenticationManager authenticationManager;
+    //로그인요청
+    @PostMapping("/api/login")
 
-    //로그인
+    //로그인여부확인
+    @GetMapping("/api/login")
+
 
     // 예외 처리
     @ExceptionHandler({IllegalArgumentException.class})
