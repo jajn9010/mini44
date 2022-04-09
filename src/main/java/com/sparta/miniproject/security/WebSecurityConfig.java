@@ -26,8 +26,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 // 로그인 기능 허용
                 .formLogin()
+                .loginPage("/api/login")
+                .loginProcessingUrl("/api/login")
                 .defaultSuccessUrl("/")
-                .permitAll()
+                .usernameParameter("userId")
+                .passwordParameter("password")
                 .and()
                 // 로그아웃 기능 허용
                 .logout()
@@ -40,6 +43,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
+        return  new DummyAuthenticationManager();
     }
+
+
 }

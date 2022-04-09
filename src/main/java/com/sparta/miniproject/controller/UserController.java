@@ -23,14 +23,15 @@ public class UserController {
 
         return userService.registerUser(requestDto);
     }
+
     @Autowired
     AuthenticationManager authenticationManager;
     //로그인요청
-    @PostMapping("/api/login")
-
+//    @PostMapping("/api/login")
+//
     //로그인여부확인
-    @GetMapping("/api/login")
-
+//    @GetMapping("/api/login")
+//
 
     // 예외 처리
     @ExceptionHandler({IllegalArgumentException.class})
