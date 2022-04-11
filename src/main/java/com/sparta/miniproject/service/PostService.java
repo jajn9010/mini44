@@ -1,16 +1,18 @@
 package com.sparta.miniproject.service;
 
-import com.sparta.miniproject.dto.CommentResponseDto;
+import com.sparta.miniproject.dto.PostRequestDto;
 import com.sparta.miniproject.dto.PostResponseDto;
 import com.sparta.miniproject.model.Comment;
 import com.sparta.miniproject.model.Post;
 import com.sparta.miniproject.repository.CommentRepository;
 import com.sparta.miniproject.repository.PostRepository;
 import com.sparta.miniproject.repository.UserRepository;
+import com.sparta.miniproject.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,22 +24,40 @@ public class PostService {
     private final UserRepository userRepository;
 
     @Transactional
-    public List<PostResponseDto> findAllPost(Long postId) {
-        List<PostResponseDto> postList = new ArrayList<>();
+    public PostResponseDto findPost(Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(
+                () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
+        );
 
-        List<Post> postsList = postRepository.findAll();
-        for (Post post : postsList) {
-            List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
-            List<Comment> commentList = commentRepository.findAll();
+        String title = post.getTitle();
+        String content = post.getContent();
+        String location = post.getLocation();
+        String nickname = post.getUser().getNickName();
+        String imageUrl = post.getImageUrl();
+        LocalDateTime createdAt = post.getCreatedAt();
+        List<Comment> comments = post.getComments();
 
-            for (Comment comment : commentList) {
-                CommentResponseDto commentResponseDto = new CommentResponseDto(comment);
-                commentResponseDtoList.add(commentResponseDto);
-            }
+        return new PostResponseDto(postId, title, content, location, nickname, imageUrl, createdAt, comments);
+    }
 
-            PostResponseDto postResponseDto = new PostResponseDto(post, commentResponseDtoList);
-            postList.add(postResponseDto);
+    @Transactional
+    public String updatePost(PostRequestDto postRequestDto, Long postId, UserDetailsImpl userDetails) {
+        Post post = postRepository.findById(postId).orElseThrow(
+                ()-> new IllegalArgumentException("게시글이 존재하지 않습니다.")
+        );
+        if(post.getUserId().equals(userDetails.getUser().getUserId())) {
+            post.updatePost(postRequestDto);
         }
-        return postList;
+        return "게시글 수정 완료";
+    }
+
+    public String deletePost(Long postId, UserDetailsImpl userDetails) {
+        Post post = postRepository.findById(postId).orElseThrow(
+                ()-> new IllegalArgumentException("삭제할 게시글이 존재하지 않습니다.")
+        );
+        if(post.getUserId().equals(userDetails.getUser().getUserId())) {
+            postRepository.deleteById(postId);
+        }
+        return "게시글 삭제 완료";
     }
 }
