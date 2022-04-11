@@ -6,15 +6,12 @@ import com.sparta.miniproject.repository.UserRepository;
 import com.sparta.miniproject.security.UserDetailsImpl;
 import com.sparta.miniproject.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
@@ -29,6 +26,7 @@ public class UserController {
 
         return userService.registerUser(requestDto);
     }
+
 
 //    @Autowired
 //    AuthenticationManager authenticationManager;
@@ -48,7 +46,7 @@ public class UserController {
     }
 
     @GetMapping("/api/login")
-    public LoginResponseDto UserInfo(@AuthenticationPrincipal UserDetailsImpl userDetails){
+    public LoginResponseDto UserInfo( @AuthenticationPrincipal UserDetailsImpl userDetails){
         String userId = userDetails.getUser().getUserId();
         String nickname = userDetails.getUser().getNickname();
 

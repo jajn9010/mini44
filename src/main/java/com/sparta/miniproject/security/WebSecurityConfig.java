@@ -1,33 +1,29 @@
 package com.sparta.miniproject.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.csrf.CsrfFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
 
 @Configuration
+@AllArgsConstructor
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+//private final UserDetailsServiceImpl userDetailsService;
+
+    @Bean
+    public UserDetailsServiceImpl userDetailsService() {
+        return new UserDetailsServiceImpl();
+    }
 
     @Bean   // 비밀번호 암호화
     public BCryptPasswordEncoder encodePassword() {
@@ -41,35 +37,42 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .csrf()
 //                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 //                    .and()
-                .addFilterAfter(usernamePasswordAuthenticationFilter(), CsrfFilter.class)
                 .authorizeRequests()
                 .antMatchers("/api/**").permitAll()
                 .antMatchers("/", "home").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .formLogin().disable()
-
+                .formLogin()
+                .loginProcessingUrl("/api/login")
+                .usernameParameter("userId")
+                .passwordParameter("password")
+                .defaultSuccessUrl("/api/login")
+                .permitAll()
+                .and()
                 .logout()
                 .permitAll();
-        http .addFilterAt(usernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+
     }
+
+//    private Filter usernamePasswordAuthenticationFilter() {
+//    }
 
 //    @Override
 //    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 //        auth.authenticationProvider(authenticationProvider());
 //    }
-
-    @Bean
-    public UsernamePasswordAuthenticationFilter usernamePasswordAuthenticationFilter() throws Exception {
-        UsernamePasswordAuthenticationFilter filter = new UsernamePasswordAuthenticationFilter();
-        filter.setFilterProcessesUrl("/api/login");
-        filter.setAuthenticationManager(authenticationManagerBean());
-        filter.setAuthenticationSuccessHandler(new SimpleUrlAuthenticationSuccessHandler("/index"));
-        filter.setAuthenticationFailureHandler(new SimpleUrlAuthenticationFailureHandler("/api/login"));
-        filter.setUsernameParameter("userId");
-        filter.setPasswordParameter("password");
-        return filter;
-    }
+//
+//    @Bean
+//    public UsernamePasswordAuthenticationFilter usernamePasswordAuthenticationFilter() throws Exception {
+//        UsernamePasswordAuthenticationFilter filter = new UsernamePasswordAuthenticationFilter();
+//        filter.setFilterProcessesUrl("/api/login");
+//        filter.setAuthenticationManager(authenticationManagerBean());
+//        filter.setAuthenticationSuccessHandler();
+//        filter.setAuthenticationFailureHandler();
+//        filter.setUsernameParameter("userId");
+//        filter.setPasswordParameter("password");
+//        return filter;
+//    }
 
 //    @Bean
 //    public AuthenticationProvider authenticationProvider() {
@@ -82,10 +85,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
+    //    @Override
+//    protected void configure(AuthenticationManagerBuilder auth) throws Exception{
+//        auth.authenticationProvider(daoAuthenticationProvider());
+//    }
     @Bean
-    @Override
-    public UserDetailsServiceImpl userDetailsService(){
-        return new UserDetailsServiceImpl();
+    DaoAuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(encodePassword());
+        provider.setUserDetailsService(userDetailsService());
+        return provider;
     }
 
 }
