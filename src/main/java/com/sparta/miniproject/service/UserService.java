@@ -32,8 +32,8 @@ public class UserService {
         Optional<User> found = userRepository.findByUserId(userId);
 
         String pattern = "^[a-zA-Z0-9]*$";
-        String pattern2 = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-])*$";
-//        ^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$
+        String pattern2 = "^[A-Za-z0-9#?!@$ %^&*-]*$";
+//        ^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-])*$
 
         if (found.isPresent()) {
             throw new IllegalArgumentException("중복된 아이디 입니다.");
@@ -42,7 +42,7 @@ public class UserService {
         }else if (nickname.length() > 6 || nickname.length() < 2) {
             throw new IllegalArgumentException("닉네임은 2자~6자범위로 입력해주세요");
         }  else if (!Pattern.matches(pattern2,password)) {
-            throw new IllegalArgumentException("비밀변호는 대소문자숫자특수문자를 각각 최소1개 포함해야합니다");
+            throw new IllegalArgumentException("비밀변호는 대소문자숫자특수문자를 포함해야합니다");
         } else if (password.length() < 8) {
             throw new IllegalArgumentException("비밀번호를 8자 이상 입력하세요");
         } else if (password.contains(userId)) {
@@ -58,14 +58,13 @@ public class UserService {
         password = passwordEncoder.encode(password);
         requestDto.setPassword(password);
 
-        LoginRequestDto loginRequestDto = new LoginRequestDto();
-        loginRequestDto.setUserId(userId);
-        loginRequestDto.setPassword(password);
+
 
         User user = new User(requestDto);
 
         return userRepository.save(user);
     }
+
 
 
 }

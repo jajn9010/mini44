@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class HomeController {
     //테스트용
-    @GetMapping("/api/login")
-    public  @ResponseBody String login(){
-        return "index";}
+//    @GetMapping("/api/login")
+//    public  @ResponseBody String login(){
+//        return "index";}
 }
