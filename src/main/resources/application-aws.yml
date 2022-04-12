@@ -1,0 +1,12 @@
+cloud:
+  aws:
+    s3:
+      bucket: mini44
+      folder:
+
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+    credentials:
+      instanceProfile: true
