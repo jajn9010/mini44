@@ -3,6 +3,7 @@ package com.sparta.miniproject.security;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -33,10 +34,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public BCryptPasswordEncoder encodePassword() {
         return new BCryptPasswordEncoder();
     }
-    @Override public void configure(WebSecurity web) {
-       web .ignoring() .antMatchers("/h2-console/**"); }
 
-        @Override
+    @Override
+    public void configure(WebSecurity web) {
+        web.ignoring().antMatchers("/h2-console/**");
+    }
+
+    @Override
     protected void configure(HttpSecurity http) throws Exception {
 
         http
@@ -47,12 +51,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/api/signup", "/api/login", "/api/idCheck", "/login").permitAll()
                 // 어떤 요청이든 '인증'
-                .antMatchers("/**").permitAll()
                 .antMatchers("/h2-console/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/**").permitAll()
+                .antMatchers("/**", "/**/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
-                .loginProcessingUrl("/login")
+                .loginPage("/login")
+                .loginProcessingUrl("/api/login")
                 .usernameParameter("userId")
                 .passwordParameter("password")
                 .defaultSuccessUrl("/")
@@ -63,7 +69,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll();
 
     }
-
 
 
     //cors
