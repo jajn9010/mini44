@@ -29,6 +29,7 @@ public class UserDetailsImpl implements UserDetails {
         return user.getPassword();
     }
 
+
     public String getNickname() {
         return user.getNickname();
     }

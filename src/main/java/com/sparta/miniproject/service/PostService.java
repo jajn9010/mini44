@@ -32,7 +32,7 @@ public class PostService {
         String title = post.getTitle();
         String content = post.getContent();
         String location = post.getLocation();
-        String nickname = post.getUser().getNickName();
+        String nickname = post.getUser().getNickname();
         String imageUrl = post.getImageUrl();
         LocalDateTime createdAt = post.getCreatedAt();
         List<Comment> comments = post.getComments();
@@ -45,7 +45,7 @@ public class PostService {
         Post post = postRepository.findById(postId).orElseThrow(
                 ()-> new IllegalArgumentException("게시글이 존재하지 않습니다.")
         );
-        if(post.getUserId().equals(userDetails.getUser().getUserId())) {
+        if(post.getUser().getUserId().equals(userDetails.getUser().getUserId())) {
             post.updatePost(postRequestDto);
         }
         return "게시글 수정 완료";
@@ -55,7 +55,7 @@ public class PostService {
         Post post = postRepository.findById(postId).orElseThrow(
                 ()-> new IllegalArgumentException("삭제할 게시글이 존재하지 않습니다.")
         );
-        if(post.getUserId().equals(userDetails.getUser().getUserId())) {
+        if(post.getUser().getUserId().equals(userDetails.getUser().getUserId())) {
             postRepository.deleteById(postId);
         }
         return "게시글 삭제 완료";

@@ -30,12 +30,12 @@ public class CommentService {
         commentRepository.save(comment);
     }
 
-    public String deleteComment(Long postId, Long commentId, UserDetailsImpl userDetails) {
+    public String deleteComment(Long commentId, UserDetailsImpl userDetails) {
         com.sparta.miniproject.model.Comment comment = commentRepository.findById(commentId).orElseThrow(
                 () -> new IllegalArgumentException("삭제할 댓글이 없습니다.")
         );
-        if(comment.getUser().equals(userDetails.getUser().getUserId())) {
+        if (comment.getUser().equals(userDetails.getUser().getUserId())) {
             commentRepository.deleteById(commentId);
         }
-    }
+    return "댓글 삭제 완료";}
 }

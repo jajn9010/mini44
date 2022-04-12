@@ -1,6 +1,5 @@
 package com.sparta.miniproject.repository;
 
-import com.oracle.xmlns.internal.webservices.jaxws_databinding.JavaParam;
 import com.sparta.miniproject.model.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
 
