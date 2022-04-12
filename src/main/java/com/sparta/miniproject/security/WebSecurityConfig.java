@@ -7,6 +7,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,20 +30,28 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public BCryptPasswordEncoder encodePassword() {
         return new BCryptPasswordEncoder();
     }
+    @Override public void configure(WebSecurity web) {
+       web .ignoring() .antMatchers("/h2-console/**"); }
 
-    @Override
+        @Override
     protected void configure(HttpSecurity http) throws Exception {
+
         http
                 .csrf().disable()   //csrf 비활성화하고자 하는 경우
 //                .csrf()
 //                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 //                    .and()
                 .authorizeRequests()
-                .antMatchers("/api/**").permitAll()
-                .antMatchers("/", "home").permitAll()
+                .antMatchers("/api/login").permitAll()
+                .antMatchers("/api/signup").permitAll()
+                .antMatchers("/login").permitAll()
+                .antMatchers("/h2-console/**").permitAll()
+                .antMatchers("/h2-console/**/**").permitAll()
+//                .antMatchers("/", "home").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
+                .loginPage("/index.html")
                 .loginProcessingUrl("/api/login")
                 .usernameParameter("userId")
                 .passwordParameter("password")
@@ -50,6 +59,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and()
                 .logout()
+                .deleteCookies("JSESSIONID")
                 .permitAll();
 
     }

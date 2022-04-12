@@ -28,6 +28,7 @@ public class UserController {
     }
 
 
+
 //    @Autowired
 //    AuthenticationManager authenticationManager;
     //로그인요청
@@ -45,12 +46,14 @@ public class UserController {
         return map;
     }
 
+    //로그인후 유저정보 가져오기
     @GetMapping("/api/login")
     public LoginResponseDto UserInfo( @AuthenticationPrincipal UserDetailsImpl userDetails){
+        String is_login = "true";
         String userId = userDetails.getUser().getUserId();
         String nickname = userDetails.getUser().getNickname();
 
-        return new LoginResponseDto(userId, nickname);
+        return new LoginResponseDto(is_login,userId, nickname);
     }
 
 }
