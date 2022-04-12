@@ -2,15 +2,12 @@ package com.sparta.miniproject.model;
 
 import com.sparta.miniproject.dto.PostRequestDto;
 import com.sparta.miniproject.dto.PostResponseDto;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,8 +39,8 @@ public class Post extends Timestamped {
     private User user;
 
     @OneToMany(cascade =CascadeType.ALL)
-    @JoinColumn(name = "postId")
-    List<Comment> comments = new ArrayList<>();
+    @JoinColumn
+    List<Comment> comments;
 
     public Post(Long postId, String title, String location, String imageUrl, User user) {
         this.postId = postId;
@@ -54,12 +51,11 @@ public class Post extends Timestamped {
     }
 
 
-    public Post(PostResponseDto responseDto,User user){
+    public Post(PostResponseDto responseDto){
         this.title = responseDto.getTitle();
         this.content = responseDto.getContent();
         this.location = responseDto.getLocation();
         this.imageUrl = responseDto.getImageUrl();
-        this.nickname = user.getNickname();
         this.user = user;
 
     }

@@ -11,6 +11,9 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 
 @Configuration
@@ -37,25 +40,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         http
-                .csrf().disable()   //csrf 비활성화하고자 하는 경우
-//                .csrf()
-//                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-//                    .and()
-                .authorizeRequests()
-                .antMatchers("/api/login").permitAll()
-                .antMatchers("/api/signup").permitAll()
-                .antMatchers("/login").permitAll()
-                .antMatchers("/h2-console/**").permitAll()
-                .antMatchers("/h2-console/**/**").permitAll()
-//                .antMatchers("/", "home").permitAll()
+                .cors()
+                .configurationSource(corsConfigurationSource());
+        http.csrf().disable();
+        http.headers().frameOptions().disable();
+        http.authorizeRequests()
+                .antMatchers("/api/signup", "/api/login", "/api/idCheck").permitAll()
+                // 어떤 요청이든 '인증'
+                .antMatchers("/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
-                .loginPage("/index.html")
-                .loginProcessingUrl("/api/login")
+                .loginProcessingUrl("/login")
                 .usernameParameter("userId")
                 .passwordParameter("password")
-                .defaultSuccessUrl("/api/login")
+                .defaultSuccessUrl("/")
                 .permitAll()
                 .and()
                 .logout()
@@ -64,30 +63,29 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     }
 
-//    private Filter usernamePasswordAuthenticationFilter() {
-//    }
 
-//    @Override
-//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.authenticationProvider(authenticationProvider());
-//    }
-//
-//    @Bean
-//    public UsernamePasswordAuthenticationFilter usernamePasswordAuthenticationFilter() throws Exception {
-//        UsernamePasswordAuthenticationFilter filter = new UsernamePasswordAuthenticationFilter();
-//        filter.setFilterProcessesUrl("/api/login");
-//        filter.setAuthenticationManager(authenticationManagerBean());
-//        filter.setAuthenticationSuccessHandler();
-//        filter.setAuthenticationFailureHandler();
-//        filter.setUsernameParameter("userId");
-//        filter.setPasswordParameter("password");
-//        return filter;
-//    }
 
-//    @Bean
-//    public AuthenticationProvider authenticationProvider() {
-//        return new CustomAuthenticationProvider(userDetailsService, encodePassword);
-//    }
+    //cors
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedOrigin("http://localhost:8080");
+        configuration.addAllowedOrigin("http://192.168.219.100:8080");
+        configuration.addAllowedOrigin("http://192.168.219.100:3000");
+        configuration.addAllowedOrigin("http://3.39.23.124:3000");
+        configuration.addAllowedOrigin("http://3.39.23.124:8080");
+        configuration.addAllowedOrigin("http://dogfootdogfoot.shop");
+        configuration.addAllowedOrigin("http://dogfootdogfoot.shop:8080");
+        configuration.addAllowedOrigin("http://dogfootdogfoot.shop:3000");
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedHeader("*");
+        configuration.addExposedHeader("Authorization");
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 
     @Bean
     @Override

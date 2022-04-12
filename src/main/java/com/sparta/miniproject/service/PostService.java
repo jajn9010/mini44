@@ -32,15 +32,14 @@ public class PostService {
         String title = post.getTitle();
         String content = post.getContent();
         String location = post.getLocation();
-        String nickname = post.getUser().getNickname();
+//        String nickname = post.getUser().getNickname();
         String imageUrl = post.getImageUrl();
         LocalDateTime createdAt = post.getCreatedAt();
         List<Comment> comments = post.getComments();
+        System.out.println(comments);
 
-        return new PostResponseDto(postId, title, content, location, nickname, imageUrl, createdAt, comments);
+        return new PostResponseDto(postId, title, content, location, imageUrl, createdAt, comments);
     }
-
-    private final PostRepository postRepository;
 
     public PostResponseDto allPosts(Long id) {
 
@@ -53,8 +52,9 @@ public class PostService {
                     post.getContent(),
                     post.getLocation(),
                     post.getImageUrl(),
-                    post.getNickName(),
-                    post.getComments()
+//                    post.getUser().getNickname(),
+                post.getCreatedAt(),
+                post.getComments()
         );
 
         return postResponseDto;
@@ -62,7 +62,7 @@ public class PostService {
 
     public List<PostResponseDto> getAllPosts() {
 
-        List<Post> posts = postRepository.findAllByOrderByCreatedAtDesc();
+        List<Post> posts = postRepository.findAll();
         List<PostResponseDto> postResponseDtos = new ArrayList<>();
 
         for (Post post : posts) {
@@ -72,7 +72,8 @@ public class PostService {
                     post.getContent(),
                     post.getLocation(),
                     post.getImageUrl(),
-                    post.getUser().getNickname(),
+//                    post.getUser().getNickname(),
+                    post.getCreatedAt(),
                     post.getComments()
             );
 
@@ -89,7 +90,7 @@ public class PostService {
         return post;
     }
 
-}
+
 
 
     @Transactional
@@ -107,9 +108,10 @@ public class PostService {
         Post post = postRepository.findById(postId).orElseThrow(
                 ()-> new IllegalArgumentException("삭제할 게시글이 존재하지 않습니다.")
         );
-        if(post.getUser().getUserId().equals(userDetails.getUser().getUserId())) {
-            postRepository.deleteById(postId);
-        }
+//        if(post.getUser().getUserId().equals(userDetails.getUser().getUserId())) {
+
+//        }
+        postRepository.deleteById(postId);
         return "게시글 삭제 완료";
     }
 }
