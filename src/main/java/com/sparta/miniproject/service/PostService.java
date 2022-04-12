@@ -40,6 +40,58 @@ public class PostService {
         return new PostResponseDto(postId, title, content, location, nickname, imageUrl, createdAt, comments);
     }
 
+    private final PostRepository postRepository;
+
+    public PostResponseDto allPosts(Long id) {
+
+        Post post = postRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("해당 하는 글이 없습니다."));
+
+        PostResponseDto postResponseDto = new PostResponseDto(
+                    post.getPostId(),
+                    post.getTitle(),
+                    post.getContent(),
+                    post.getLocation(),
+                    post.getImageUrl(),
+                    post.getNickName(),
+                    post.getComments()
+        );
+
+        return postResponseDto;
+    }
+
+    public List<PostResponseDto> getAllPosts() {
+
+        List<Post> posts = postRepository.findAllByOrderByCreatedAtDesc();
+        List<PostResponseDto> postResponseDtos = new ArrayList<>();
+
+        for (Post post : posts) {
+            PostResponseDto postResponseDto = new PostResponseDto(
+                    post.getPostId(),
+                    post.getTitle(),
+                    post.getContent(),
+                    post.getLocation(),
+                    post.getImageUrl(),
+                    post.getUser().getNickname(),
+                    post.getComments()
+            );
+
+            postResponseDtos.add(postResponseDto);
+        }
+
+        return postResponseDtos;
+    }
+
+    @Transactional
+    public Post savePost(PostResponseDto postResponseDto) {
+        Post post = new Post(postResponseDto);
+        postRepository.save(post);
+        return post;
+    }
+
+}
+
+
     @Transactional
     public String updatePost(PostRequestDto postRequestDto, Long postId, UserDetailsImpl userDetails) {
         Post post = postRepository.findById(postId).orElseThrow(

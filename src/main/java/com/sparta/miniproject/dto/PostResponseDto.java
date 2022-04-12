@@ -1,23 +1,31 @@
-package com.sparta.miniproject.dto;
 
-import com.sparta.miniproject.model.Comment;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
-@Getter
+
+
 @Setter
-@AllArgsConstructor
+@Getter
+@RequiredArgsConstructor
 public class PostResponseDto {
-    private Long id;
+
+    private Long postId;
     private String title;
     private String content;
     private String location;
-    private String nickname;
     private String imageUrl;
-    private LocalDateTime createAt;
-    private List<Comment> comments;
-}
+    private String nickName;
+    private List<CommentResponseDto> comments;
+
+    public PostResponseDto(Long postId, String title, String content, String location, String imageUrl, String nickName, List<CommentResponseDto> comments) {
+        this.postId = postId;
+        this.title = title;
+        this.content = content;
+        this.location = location;
+        this.imageUrl = imageUrl;
+        this.nickName =  nickName;
+        this.comments = comments;
+    }
