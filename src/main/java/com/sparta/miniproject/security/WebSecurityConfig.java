@@ -45,9 +45,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.headers().frameOptions().disable();
         http.authorizeRequests()
-                .antMatchers("/api/signup", "/api/login", "/api/idCheck").permitAll()
+                .antMatchers("/api/signup", "/api/login", "/api/idCheck", "/login").permitAll()
                 // 어떤 요청이든 '인증'
                 .antMatchers("/**").permitAll()
+                .antMatchers("/h2-console/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -73,8 +74,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         configuration.addAllowedOrigin("http://localhost:8080");
         configuration.addAllowedOrigin("http://192.168.219.100:8080");
         configuration.addAllowedOrigin("http://192.168.219.100:3000");
-        configuration.addAllowedOrigin("http://3.39.23.124:3000");
-        configuration.addAllowedOrigin("http://3.39.23.124:8080");
+        configuration.addAllowedOrigin("http://54.180.90.59:3000");
+        configuration.addAllowedOrigin("http://54.180.90.59:8080");
         configuration.addAllowedOrigin("http://dogfootdogfoot.shop");
         configuration.addAllowedOrigin("http://dogfootdogfoot.shop:8080");
         configuration.addAllowedOrigin("http://dogfootdogfoot.shop:3000");
