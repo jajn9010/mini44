@@ -18,11 +18,11 @@ public abstract class Timestamped {
 
 
     @CreatedDate
-    @JsonFormat
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    @JsonFormat
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime modifiedAt;
 
 }

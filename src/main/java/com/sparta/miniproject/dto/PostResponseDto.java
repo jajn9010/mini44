@@ -24,14 +24,14 @@ public class PostResponseDto {
     private LocalDateTime createdAt;
     private List<Comment> comments;
 
-    public PostResponseDto(Long postId, String title, String content, String location, String imageUrl,LocalDateTime createdAt, List<Comment> comments) {
+    public PostResponseDto(Long postId, String title, String content, String location, String imageUrl, LocalDateTime createdAt, List<Comment> comments) {
         this.postId = postId;
         this.title = title;
         this.content = content;
         this.location = location;
         this.imageUrl = imageUrl;
 //        this.nickname = nickname;
-        this.createdAt = this.createdAt;
+        this.createdAt = createdAt;
         this.comments = comments;
     }
 }

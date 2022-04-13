@@ -36,8 +36,8 @@ public class PostService {
 //        String nickname = post.getUser().getNickname();
         String imageUrl = post.getImageUrl();
         LocalDateTime createdAt = post.getCreatedAt();
-        List<Comment> comments = commentRepository.findAllByPost_PostId(postId);
-        System.out.println(comments);
+        List<Comment> comments = commentRepository.findAllByPost_PostIdOrderByCommentIdDesc(postId);
+
 
         return new PostResponseDto(postId, title, content, location, imageUrl, createdAt, comments);
     }
