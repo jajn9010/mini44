@@ -86,7 +86,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout()
                 .logoutUrl("/api/logout")
                 .logoutSuccessHandler(restLogoutSucccessHandler)
-                .logoutSuccessUrl("/").permitAll();
+                .permitAll();
+
 
     }
 
