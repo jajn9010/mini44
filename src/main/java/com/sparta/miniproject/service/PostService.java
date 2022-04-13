@@ -1,5 +1,6 @@
 package com.sparta.miniproject.service;
 
+import com.sparta.miniproject.dto.CommentResponseDto;
 import com.sparta.miniproject.dto.PostRequestDto;
 import com.sparta.miniproject.dto.PostResponseDto;
 import com.sparta.miniproject.model.Comment;
@@ -35,7 +36,7 @@ public class PostService {
 //        String nickname = post.getUser().getNickname();
         String imageUrl = post.getImageUrl();
         LocalDateTime createdAt = post.getCreatedAt();
-        List<Comment> comments = post.getComments();
+        List<Comment> comments = commentRepository.findAllByPostId(postId);
         System.out.println(comments);
 
         return new PostResponseDto(postId, title, content, location, imageUrl, createdAt, comments);
