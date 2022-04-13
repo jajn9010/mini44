@@ -48,7 +48,6 @@ public class Post extends Timestamped {
         this.content = imageDto.getContent();
         this.location = imageDto.getLocation();
         this.imageUrl = imageDto.getImageUrl();
-        this.user = user;
 
     }
 
