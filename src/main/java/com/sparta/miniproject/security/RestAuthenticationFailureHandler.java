@@ -16,19 +16,24 @@ import java.util.Map;
 
 @Component
 public class RestAuthenticationFailureHandler implements AuthenticationFailureHandler {
-
-    @Autowired
-    UserResponseHandler userResponseHandlerHandler;
+    public HttpServletResponse setResponse(HttpServletResponse httpServletResponse){
+        httpServletResponse.setContentType("application/json");
+        httpServletResponse.setCharacterEncoding("UTF-8");
+        httpServletResponse.setStatus(HttpServletResponse.SC_OK);
+        return httpServletResponse;
+    }
+//    @Autowired
+//    UserResponseHandler userResponseHandlerHandler;
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse httpServletResponse,
                                         AuthenticationException exception) throws IOException {
 
-        httpServletResponse = userResponseHandlerHandler.setResponse(httpServletResponse);
-        Map<String,Object> response = userResponseHandlerHandler.setMessage("아이디와 비밀번호를 확인해 주세요.", HttpStatus.UNAUTHORIZED);
-        OutputStream out = httpServletResponse.getOutputStream();
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.writerWithDefaultPrettyPrinter().writeValue(out, response);
-        out.flush();
+//        httpServletResponse = userResponseHandlerHandler.setResponse(httpServletResponse);
+//        Map<String,Object> response = userResponseHandlerHandler.setMessage("아이디와 비밀번호를 확인해 주세요.", HttpStatus.UNAUTHORIZED);
+//        OutputStream out = httpServletResponse.getOutputStream();
+//        ObjectMapper mapper = new ObjectMapper();
+//        mapper.writerWithDefaultPrettyPrinter().writeValue(out, response);
+//        out.flush();
     };
 }
