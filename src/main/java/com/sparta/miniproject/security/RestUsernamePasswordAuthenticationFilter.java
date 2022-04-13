@@ -38,6 +38,7 @@ public class RestUsernamePasswordAuthenticationFilter extends UsernamePasswordAu
 
         }
         this.setDetails(request, authenticationToken);
+        System.out.println(authenticationToken);
         return this.getAuthenticationManager().authenticate(authenticationToken);
     }
 

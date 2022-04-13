@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -42,6 +43,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public FormLoginAuthProvider formLoginAuthProvider() {
+        return new FormLoginAuthProvider((BCryptPasswordEncoder) encodePassword());
+    }
+
     @Override
     public void configure(WebSecurity web) {
         web.ignoring().antMatchers("/h2-console/**");
@@ -59,8 +65,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.headers().frameOptions().disable();
         http.formLogin().disable()
-        .httpBasic().disable();
-        http.addFilterAt(getAuthenticationFilter(), RestUsernamePasswordAuthenticationFilter.class);
+                .httpBasic().disable();
+        http.addFilterAt(getAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         http.authorizeRequests()
                 .antMatchers("/api/signup", "/api/login", "/user/loginCheck", "/login", "/user/loginCheck").permitAll()
                 // 어떤 요청이든 '인증'
@@ -107,7 +113,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return source;
     }
 
-//    @Bean
+    //    @Bean
 //    @Override
 //    public AuthenticationManager authenticationManagerBean() throws Exception {
 //        return super.authenticationManagerBean();
@@ -124,21 +130,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //        provider.setUserDetailsService(userDetailsService());
 //        return provider;
 //    }
-protected RestUsernamePasswordAuthenticationFilter getAuthenticationFilter(){
-    RestUsernamePasswordAuthenticationFilter authFilter = new RestUsernamePasswordAuthenticationFilter();
-    try{
-        authFilter.setFilterProcessesUrl("/api/login"); // 로그인에 대한 POST 요청을 받을 url을 정의합니다. 해당 코드가 없으면 정상적으로 작동하지 않습니다.
-        authFilter.setUsernameParameter("username");
-        authFilter.setPasswordParameter("password");
-        authFilter.setAuthenticationManager(this.authenticationManagerBean());
-        authFilter.setAuthenticationFailureHandler(restAuthenticationFailureHandler);
-        authFilter.setAuthenticationSuccessHandler(restAuthenticationSuccessHandler);
+    protected RestUsernamePasswordAuthenticationFilter getAuthenticationFilter(){
+        RestUsernamePasswordAuthenticationFilter authFilter = new RestUsernamePasswordAuthenticationFilter();
+        try{
+            authFilter.setFilterProcessesUrl("/api/login"); // 로그인에 대한 POST 요청을 받을 url을 정의합니다. 해당 코드가 없으면 정상적으로 작동하지 않습니다.
+            authFilter.setUsernameParameter("username");
+            authFilter.setPasswordParameter("password");
+            authFilter.setAuthenticationManager(this.authenticationManagerBean());
+            authFilter.setAuthenticationFailureHandler(restAuthenticationFailureHandler);
+            authFilter.setAuthenticationSuccessHandler(restAuthenticationSuccessHandler);
 
-    } catch (Exception e){
-        e.printStackTrace();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return authFilter;
+
     }
-    return authFilter;
-
-}
 
 }
