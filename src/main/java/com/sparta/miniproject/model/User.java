@@ -19,7 +19,7 @@ public class User{
 
     // 반드시 값을 가지도록 합니다.
     @Column(nullable = false)
-    private String userId;
+    private String username;
 
     @Column(nullable = false)
     private String nickname;
@@ -31,15 +31,15 @@ public class User{
     private String email;
 
 
-    public User(String userId, String nickname, String password, String email) {
-        this.userId = userId;
+    public User(String username, String nickname, String password, String email) {
+        this.username = username;
         this.nickname = nickname;
         this.password = password;
         this.email = email;
     }
 
     public User(UserRequestDto requestDto) {
-        this.userId = requestDto.getUserId();
+        this.username = requestDto.getUsername();
         this.nickname = requestDto.getNickname();
         this.password = requestDto.getPassword();
         this.email = requestDto.getEmail();

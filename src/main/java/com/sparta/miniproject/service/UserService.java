@@ -1,6 +1,5 @@
 package com.sparta.miniproject.service;
 
-import com.sparta.miniproject.dto.LoginRequestDto;
 import com.sparta.miniproject.dto.UserRequestDto;
 import com.sparta.miniproject.model.User;
 import com.sparta.miniproject.repository.UserRepository;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 
 @Service
@@ -23,13 +21,13 @@ public class UserService {
     //회원가입 및 유효성 검사
     public User registerUser(@RequestBody UserRequestDto requestDto) {
 
-        String userId = requestDto.getUserId();
+        String username = requestDto.getUsername();
         String nickname = requestDto.getNickname();
         String password = requestDto.getPassword();
         String passwordCheck = requestDto.getPasswordCheck();
         String email = requestDto.getEmail();
         // 회원 ID 중복 확인
-        Optional<User> found = userRepository.findByUserId(userId);
+        Optional<User> found = userRepository.findByUsername(username);
 
         String pattern = "^[a-zA-Z0-9]*$";
         String pattern2 = "^[A-Za-z0-9#?!@$ %^&*-]*$";

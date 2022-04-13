@@ -1,11 +1,10 @@
 package com.sparta.miniproject.security;
 
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -22,6 +21,13 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    private RestAuthenticationFailureHandler restAuthenticationFailureHandler;
+    @Autowired
+    private RestAuthenticationSuccessHandler restAuthenticationSuccessHandler;
+    @Autowired
+    private RestLogoutSucccessHandler restLogoutSucccessHandler;
 
 //private final UserDetailsServiceImpl userDetailsService;
 
@@ -42,32 +48,38 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http.headers().httpStrictTransportSecurity()
+                .maxAgeInSeconds(0)
+                .includeSubDomains(true);
 
         http
                 .cors()
                 .configurationSource(corsConfigurationSource());
         http.csrf().disable();
         http.headers().frameOptions().disable();
+        http.formLogin().disable()
+        .httpBasic().disable();
+        http.addFilterAt(getAuthenticationFilter(), RestUsernamePasswordAuthenticationFilter.class);
         http.authorizeRequests()
-                .antMatchers("/api/signup", "/api/login", "/api/idCheck", "/login").permitAll()
+                .antMatchers("/api/signup", "/api/login", "/user/loginCheck", "/login", "/user/loginCheck").permitAll()
                 // 어떤 요청이든 '인증'
                 .antMatchers("/h2-console/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/**").permitAll()
                 .antMatchers("/**", "/**/**").permitAll()
                 .anyRequest().authenticated()
-                .and()
-                .formLogin()
-                .loginPage("/login")
-                .loginProcessingUrl("/api/login")
-                .usernameParameter("userId")
-                .passwordParameter("password")
-                .defaultSuccessUrl("/")
-                .failureUrl("/login")
-                .permitAll()
+
+//                .loginPage("/login")
+//                .loginProcessingUrl("/api/login")
+//                .usernameParameter("userId")
+//                .passwordParameter("password")
+//                .defaultSuccessUrl("/")
+//                .failureUrl("/login")
+//                .permitAll()
                 .and()
                 .logout()
-                .deleteCookies("JSESSIONID")
-                .permitAll();
+                .logoutUrl("/api/logout")
+                .logoutSuccessHandler(restLogoutSucccessHandler)
+                .logoutSuccessUrl("/").permitAll();
 
     }
 
@@ -94,22 +106,35 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return source;
     }
 
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
-
-    //    @Override
-//    protected void configure(AuthenticationManagerBuilder auth) throws Exception{
-//        auth.authenticationProvider(daoAuthenticationProvider());
+//    @Bean
+//    @Override
+//    public AuthenticationManager authenticationManagerBean() throws Exception {
+//        return super.authenticationManagerBean();
 //    }
-    @Bean
-    DaoAuthenticationProvider daoAuthenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(encodePassword());
-        provider.setUserDetailsService(userDetailsService());
-        return provider;
+//
+//    //    @Override
+////    protected void configure(AuthenticationManagerBuilder auth) throws Exception{
+////        auth.authenticationProvider(daoAuthenticationProvider());
+////    }
+//    @Bean
+//    DaoAuthenticationProvider daoAuthenticationProvider() {
+//        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+//        provider.setPasswordEncoder(encodePassword());
+//        provider.setUserDetailsService(userDetailsService());
+//        return provider;
+//    }
+protected RestUsernamePasswordAuthenticationFilter getAuthenticationFilter(){
+    RestUsernamePasswordAuthenticationFilter authFilter = new RestUsernamePasswordAuthenticationFilter();
+    try{
+        authFilter.setFilterProcessesUrl("/api/login"); // 로그인에 대한 POST 요청을 받을 url을 정의합니다. 해당 코드가 없으면 정상적으로 작동하지 않습니다.
+        authFilter.setUsernameParameter("username");
+        authFilter.setPasswordParameter("password");
+        authFilter.setAuthenticationManager(this.authenticationManagerBean());
+        authFilter.setAuthenticationFailureHandler(restAuthenticationFailureHandler);
+        authFilter.setAuthenticationSuccessHandler(restAuthenticationSuccessHandler);
+    } catch (Exception e){
+        e.printStackTrace();
     }
-
+    return authFilter;
+}
 }

@@ -1,6 +1,5 @@
 package com.sparta.miniproject.service;
 
-import com.sparta.miniproject.dto.CommentResponseDto;
 import com.sparta.miniproject.dto.PostRequestDto;
 import com.sparta.miniproject.dto.PostResponseDto;
 import com.sparta.miniproject.model.Comment;
@@ -99,7 +98,7 @@ public class PostService {
         Post post = postRepository.findById(postId).orElseThrow(
                 ()-> new IllegalArgumentException("게시글이 존재하지 않습니다.")
         );
-        if(post.getUser().getUserId().equals(userDetails.getUser().getUserId())) {
+        if(post.getUser().getUsername().equals(userDetails.getUser().getUsername())) {
             post.updatePost(postRequestDto);
         }
         return "게시글 수정 완료";
