@@ -9,7 +9,6 @@ import java.util.List;
 
 @Getter
 @Setter
-@NoArgsConstructor
 public class PostRequestDto {
     private String title;
     private String content;

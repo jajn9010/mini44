@@ -26,17 +26,6 @@ public class UserController {
         return userService.registerUser(requestDto);
     }
 
-
-
-//    @Autowired
-//    AuthenticationManager authenticationManager;
-    //로그인요청
-//    @PostMapping("/api/login")
-//
-//    로그인여부확인
-//    @GetMapping("/api/login")
-
-
     // 예외 처리
     @ExceptionHandler({IllegalArgumentException.class})
     public Map<String, String> handleException(Exception e) {
@@ -48,11 +37,12 @@ public class UserController {
     //로그인후 유저정보 가져오기
     @GetMapping("/user/loginCheck")
     public LoginResponseDto UserInfo( @AuthenticationPrincipal UserDetailsImpl userDetails){
-        String is_login = "true";
-        String username = userDetails.getUser().getUsername();
-        String nickname = userDetails.getUser().getNickname();
 
-        return new LoginResponseDto(is_login,username, nickname);
-    }
+            String is_login = "true";
+            String username = userDetails.getUser().getUsername();
+            String nickname = userDetails.getUser().getNickname();
+            return new LoginResponseDto(is_login,username, nickname);
+        }
+
 
 }
