@@ -14,7 +14,10 @@ import com.sparta.miniproject.repository.UserRepository;
 import com.sparta.miniproject.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
@@ -218,9 +221,9 @@ public class PostService {
         Post post = new Post(imageDto);
 
         postRepository.save(post);
+        
 
     }
-
 }
 
 

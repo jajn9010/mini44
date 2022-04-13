@@ -59,7 +59,7 @@ public class Post extends Timestamped {
         this.user = user;
 
     }
-
+    
     public void updatePost(ImageDto imageDto) {
         this.content = imageDto.getContent();
         this.imageUrl = imageDto.getImageUrl();
