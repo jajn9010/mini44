@@ -1,6 +1,5 @@
 package com.sparta.miniproject.service;
 
-import com.sparta.miniproject.dto.CommentResponseDto;
 import com.sparta.miniproject.dto.PostRequestDto;
 import com.sparta.miniproject.dto.PostResponseDto;
 import com.sparta.miniproject.model.Comment;
@@ -36,7 +35,7 @@ public class PostService {
 //        String nickname = post.getUser().getNickname();
         String imageUrl = post.getImageUrl();
         LocalDateTime createdAt = post.getCreatedAt();
-        List<Comment> comments = commentRepository.findAllByPostId(postId);
+        List<Comment> comments = commentRepository.findAllByPost_PostId(postId);
         System.out.println(comments);
 
         return new PostResponseDto(postId, title, content, location, imageUrl, createdAt, comments);
@@ -84,15 +83,31 @@ public class PostService {
         return postResponseDtos;
     }
 
-    @Transactional
-    public Post savePost(PostResponseDto postResponseDto) {
-        Post post = new Post(postResponseDto);
-        postRepository.save(post);
-        return post;
-    }
+    //    @Transactional
+//        public Post savePost(PostRequestDto postRequestDto) {
+//        Post post = new Post(postRequestDto);
+//        postRepository.save(post);
+//        return post;
 
+//    }
 
+//        게시글 작성
+@Transactional
+public PostResponseDto createPost(PostResponseDto postResponseDto){
 
+//        Long userId = userDetails.getId;
+
+    Post post = new Post(postResponseDto);
+    postRepository.save(post);
+    return postResponseDto;
+}
+
+//    @Transactional
+//    public void createPost(UserDetailsImpl userDetails, PostRequestDto postRequestDto) {
+////        User user = ValidateChecker.userDetailsIsNull(userDetails);
+//        Post post = new Post(user,postRequestDto);
+//        postRepository.save(post);
+//    }
 
     @Transactional
     public String updatePost(PostRequestDto postRequestDto, Long postId, UserDetailsImpl userDetails) {

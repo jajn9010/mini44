@@ -1,6 +1,5 @@
 package com.sparta.miniproject.service;
 
-import com.sparta.miniproject.dto.LoginRequestDto;
 import com.sparta.miniproject.dto.UserRequestDto;
 import com.sparta.miniproject.model.User;
 import com.sparta.miniproject.repository.UserRepository;

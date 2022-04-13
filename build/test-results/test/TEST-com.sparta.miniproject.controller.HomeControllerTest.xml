@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.sparta.miniproject.controller.HomeControllerTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2022-04-13T06:14:24" hostname="DESKTOP-EN0GBG1" time="0.011">
+  <properties/>
+  <testcase name="allPosts()" classname="com.sparta.miniproject.controller.HomeControllerTest" time="0.011"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

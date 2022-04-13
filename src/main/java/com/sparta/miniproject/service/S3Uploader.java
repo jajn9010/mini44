@@ -20,6 +20,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class S3Uploader {
     private final AmazonS3Client amazonS3Client;
+
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
@@ -27,6 +28,7 @@ public class S3Uploader {
         File uploadFile = convert(multipartFile)  // 파일 변환할 수 없으면 에러
                 .orElseThrow(() -> new IllegalArgumentException("error: MultipartFile -> File convert fail"));
         return upload(uploadFile, dirName);
+
     }
 
     public String upload(File uploadFile, String filePath) {
@@ -36,15 +38,24 @@ public class S3Uploader {
         String imageUrl = "https://mini-pro.s3.ap-northeast-2.amazonaws.com/static/" + uploadImageUrl;
         removeNewFile(uploadFile);
         return uploadImageUrl;
+
     }
 
     // S3로 업로드
     private String putS3(File uploadFile, String fileName) {
+
         amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, uploadFile).withCannedAcl(CannedAccessControlList.PublicRead));
+
+        String nqq = amazonS3Client.getUrl(bucket, fileName).toString();
+
+        System.out.println(nqq);
+
         return amazonS3Client.getUrl(bucket, fileName).toString();
+
     }
 
     // 로컬에 저장된 이미지 지우기
+
     private void removeNewFile(File targetFile) {
         if (targetFile.delete()) {
             System.out.println("File delete success");
@@ -60,6 +71,7 @@ public class S3Uploader {
             try (FileOutputStream fos = new FileOutputStream(convertFile)) { // FileOutputStream 데이터를 파일에 바이트 스트림으로 저장하기 위함
                 fos.write(file.getBytes());
             }
+            System.out.println("test");
             return Optional.of(convertFile);
         }
         return Optional.empty();

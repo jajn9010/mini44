@@ -80,8 +80,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         configuration.addAllowedOrigin("http://localhost:8080");
         configuration.addAllowedOrigin("http://192.168.219.100:8080");
         configuration.addAllowedOrigin("http://192.168.219.100:3000");
-        configuration.addAllowedOrigin("http://54.180.90.59:3000");
-        configuration.addAllowedOrigin("http://54.180.90.59:8080");
+        configuration.addAllowedOrigin("http://3.35.218.8:3000");
+        configuration.addAllowedOrigin("http://3.35.218.8:8080");
         configuration.addAllowedOrigin("http://dogfootdogfoot.shop");
         configuration.addAllowedOrigin("http://dogfootdogfoot.shop:8080");
         configuration.addAllowedOrigin("http://dogfootdogfoot.shop:3000");

@@ -44,6 +44,7 @@ public class UserController {
         Map<String, String> map = new HashMap<>();
         map.put("errMsg", e.getMessage());
         return map;
+
     }
 
     //로그인후 유저정보 가져오기

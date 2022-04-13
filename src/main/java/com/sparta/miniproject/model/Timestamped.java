@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public abstract class Timestamped {
 
-
     @CreatedDate
     @JsonFormat
     private LocalDateTime createdAt;
@@ -24,5 +23,6 @@ public abstract class Timestamped {
     @LastModifiedDate
     @JsonFormat
     private LocalDateTime modifiedAt;
+
 
 }

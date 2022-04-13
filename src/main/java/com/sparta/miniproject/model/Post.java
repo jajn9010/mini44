@@ -42,14 +42,13 @@ public class Post extends Timestamped {
     @JoinColumn
     List<Comment> comments;
 
-    public Post(Long postId, String title, String location, String imageUrl, User user) {
-        this.postId = postId;
-        this.title = title;
-        this.location = location;
-        this.imageUrl = imageUrl;
+    public Post(User user,PostRequestDto postRequestDto) {
         this.user = user;
+        this.content = postRequestDto.getContent();
+        this.imageUrl = postRequestDto.getImageUrl();
+        this.title = postRequestDto.getTitle();
+        this.comments = postRequestDto.getComments();
     }
-
 
     public Post(PostResponseDto responseDto){
         this.title = responseDto.getTitle();
