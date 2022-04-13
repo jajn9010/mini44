@@ -20,20 +20,25 @@ public class RestUsernamePasswordAuthenticationFilter extends UsernamePasswordAu
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         UsernamePasswordAuthenticationToken authenticationToken;
+
         if (request.getContentType().equals(MimeTypeUtils.APPLICATION_JSON_VALUE)){
             try{
                 LoginRequestDto loginRequestDto = objectMapper.readValue(request.getReader().lines().collect(Collectors.joining()), LoginRequestDto.class);
-                authenticationToken = new UsernamePasswordAuthenticationToken(loginRequestDto.getUserId(), loginRequestDto.getPassword());
+                authenticationToken = new UsernamePasswordAuthenticationToken(loginRequestDto.getUsername(), loginRequestDto.getPassword());
             } catch (IOException e){
                 e.printStackTrace();
                 throw new AuthenticationServiceException("Json parsing에 실패했습니다.");
             }
+
         } else{
             String username = obtainUsername(request);
             String password = obtainPassword(request);
             authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
+
+
         }
         this.setDetails(request, authenticationToken);
         return this.getAuthenticationManager().authenticate(authenticationToken);
     }
+
 }
