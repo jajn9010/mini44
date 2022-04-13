@@ -108,10 +108,9 @@ public class PostService {
         Post post = postRepository.findById(postId).orElseThrow(
                 ()-> new IllegalArgumentException("삭제할 게시글이 존재하지 않습니다.")
         );
-//        if(post.getUser().getUserId().equals(userDetails.getUser().getUserId())) {
-
-//        }
-        postRepository.deleteById(postId);
+        if(post.getUser().getUsername().equals(userDetails.getUser().getUsername())) {
+            postRepository.deleteById(postId);
+        }
         return "게시글 삭제 완료";
     }
 }

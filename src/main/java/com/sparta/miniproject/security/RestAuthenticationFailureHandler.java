@@ -22,7 +22,7 @@ public class RestAuthenticationFailureHandler implements AuthenticationFailureHa
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse httpServletResponse,
-                                        AuthenticationException exception) throws IOException, ServletException {
+                                        AuthenticationException exception) throws IOException {
 
         httpServletResponse = userResponseHandlerHandler.setResponse(httpServletResponse);
         Map<String,Object> response = userResponseHandlerHandler.setMessage("아이디와 비밀번호를 확인해 주세요.", HttpStatus.UNAUTHORIZED);
