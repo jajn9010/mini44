@@ -38,7 +38,7 @@ public class Post extends Timestamped {
     @ManyToOne
     private User user;
 
-    @OneToMany(fetch = FetchType.EAGER ,cascade =CascadeType.ALL)
+    @OneToMany(cascade =CascadeType.ALL)
     @JoinColumn
     List<Comment> comments;
 
