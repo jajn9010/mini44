@@ -1,5 +1,6 @@
 package com.sparta.miniproject.model;
 
+import com.sparta.miniproject.dto.ImageDto;
 import com.sparta.miniproject.dto.PostRequestDto;
 import com.sparta.miniproject.dto.PostResponseDto;
 import lombok.Getter;
@@ -42,30 +43,27 @@ public class Post extends Timestamped {
     @JoinColumn
     List<Comment> comments;
 
-    public Post(Long postId, String title, String location, String imageUrl, User user) {
-        this.postId = postId;
-        this.title = title;
-        this.location = location;
-        this.imageUrl = imageUrl;
+    public Post(ImageDto imageDto){
+        this.title = imageDto.getTitle();
+        this.content = imageDto.getContent();
+        this.location = imageDto.getLocation();
+        this.imageUrl = imageDto.getImageUrl();
         this.user = user;
+
     }
 
+    public void updatePost(ImageDto imageDto) {
+        this.title = imageDto.getTitle();
+        this.content = imageDto.getContent();
+        this.location = imageDto.getLocation();
+        this.imageUrl = imageDto.getImageUrl();
+    }
 
-    public Post(PostResponseDto responseDto){
+    public Post(PostResponseDto responseDto, User user) {
         this.title = responseDto.getTitle();
         this.content = responseDto.getContent();
         this.location = responseDto.getLocation();
         this.imageUrl = responseDto.getImageUrl();
         this.user = user;
-
     }
-
-
-    public void updatePost(PostRequestDto postRequestDto) {
-        this.title = postRequestDto.getTitle();
-        this.content = postRequestDto.getContent();
-        this.location = postRequestDto.getLocation();
-        this.imageUrl = postRequestDto.getImageUrl();
-    }
-
 }
