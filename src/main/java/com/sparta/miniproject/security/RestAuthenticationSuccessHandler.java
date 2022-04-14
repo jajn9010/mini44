@@ -16,27 +16,27 @@ import java.util.Map;
 
 @Component
 public class RestAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
-    public HttpServletResponse setResponse(HttpServletResponse httpServletResponse){
-        httpServletResponse.setContentType("application/json");
-        httpServletResponse.setCharacterEncoding("UTF-8");
-        httpServletResponse.setStatus(HttpServletResponse.SC_OK);
-        return httpServletResponse;
-    }
+//    public HttpServletResponse setResponse(HttpServletResponse httpServletResponse){
+//        httpServletResponse.setContentType("application/json");
+//        httpServletResponse.setCharacterEncoding("UTF-8");
+//        httpServletResponse.setStatus(HttpServletResponse.SC_OK);
+//        return httpServletResponse;
+//    }
 
-//    @Autowired
-//    UserResponseHandler userResponseHandlerHandler;
+    @Autowired
+    UserResponseHandler userResponseHandlerHandler;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse httpServletResponse,
                                         Authentication authentication) throws IOException, ServletException {
 
-//        httpServletResponse = userResponseHandlerHandler.setResponse(httpServletResponse);
-//        Map<String,Object> response = userResponseHandlerHandler.setMessage("로그인이 완료되었습니다.", HttpStatus.OK);
-//
-//        OutputStream out = httpServletResponse.getOutputStream();
-//        ObjectMapper mapper = new ObjectMapper();
-//        mapper.writerWithDefaultPrettyPrinter().writeValue(out, response);
-//        out.flush();
+        httpServletResponse = userResponseHandlerHandler.setResponse(httpServletResponse);
+        Map<String,Object> response = userResponseHandlerHandler.setMessage("로그인이 완료되었습니다.", HttpStatus.OK);
+
+        OutputStream out = httpServletResponse.getOutputStream();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.writerWithDefaultPrettyPrinter().writeValue(out, response);
+        out.flush();
     };
 
 }

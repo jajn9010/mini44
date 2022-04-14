@@ -58,13 +58,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.headers().httpStrictTransportSecurity()
                 .maxAgeInSeconds(0)
                 .includeSubDomains(true);
-        http
-                .cors()
-                .configurationSource(corsConfigurationSource());
-        http.csrf().disable();
-        http.headers().frameOptions().disable();
-
-
+        http.cors()
+            .and()
+            .csrf()
+            .disable();
+        http.headers()
+                .frameOptions()
+                .disable();
 //        http.addFilterAt(getAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         http.authorizeRequests()
                 .antMatchers("/api/signup", "/api/login", "/user/loginCheck", "/login", "/user/loginCheck").permitAll()
@@ -87,43 +87,38 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutUrl("/api/logout")
                 .logoutSuccessHandler(restLogoutSucccessHandler)
                 .permitAll();
-
-
     }
 
 
     //cors
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://localhost:3000");
-        configuration.addAllowedOrigin("http://localhost:8080");
-        configuration.addAllowedOrigin("http://192.168.219.100:8080");
-        configuration.addAllowedOrigin("http://192.168.219.100:3000");
-        configuration.addAllowedOrigin("http://54.180.90.59:3000");
-        configuration.addAllowedOrigin("http://54.180.90.59:8080");
-        configuration.addAllowedMethod("POST");
-        configuration.addAllowedMethod("GET");
-        configuration.addAllowedMethod("PUT");
-        configuration.addAllowedMethod("DELETE");
-        configuration.addAllowedHeader("*");
-        configuration.addExposedHeader("Authorization");
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.addAllowedOrigin("http://localhost:3000");
+//        configuration.addAllowedOrigin("http://localhost:8080");
+//        configuration.addAllowedOrigin("http://192.168.219.100:8080");
+//        configuration.addAllowedOrigin("http://192.168.219.100:3000");
+//        configuration.addAllowedOrigin("http://54.180.90.59:3000");
+//        configuration.addAllowedOrigin("http://54.180.90.59:8080");
+//        configuration.addAllowedMethod("*");
+//        configuration.addAllowedHeader("*");
+//        configuration.addExposedHeader("Authorization");
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
+//    }
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
-
-    //    @Bean
+//    @Bean
 //    @Override
 //    public AuthenticationManager authenticationManagerBean() throws Exception {
 //        return super.authenticationManagerBean();
 //    }
 //
-//    //    @Override
-////    protected void configure(AuthenticationManagerBuilder auth) throws Exception{
-////        auth.authenticationProvider(daoAuthenticationProvider());
-////    }
+    //    @Override
+//    protected void configure(AuthenticationManagerBuilder auth) throws Exception{
+//        auth.authenticationProvider(daoAuthenticationProvider());
+//    }
 //    @Bean
 //    DaoAuthenticationProvider daoAuthenticationProvider() {
 //        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
