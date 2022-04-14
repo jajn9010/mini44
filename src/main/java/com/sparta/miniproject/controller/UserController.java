@@ -35,12 +35,12 @@ public class UserController {
     }
 
     //로그인후 유저정보 가져오기
-    @GetMapping("/user/loginCheck")
+    @PostMapping("/user/loginCheck")
     public LoginResponseDto UserInfo( @AuthenticationPrincipal UserDetailsImpl userDetails){
 
             String is_login = "true";
-            String username = userDetails.getUser().getUsername();
-            String nickname = userDetails.getUser().getNickname();
+            String username = userDetails.getUsername();
+            String nickname = userDetails.getNickname();
             return new LoginResponseDto(is_login,username, nickname);
         }
 
