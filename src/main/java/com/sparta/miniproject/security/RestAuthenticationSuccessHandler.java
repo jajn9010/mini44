@@ -16,12 +16,6 @@ import java.util.Map;
 
 @Component
 public class RestAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
-//    public HttpServletResponse setResponse(HttpServletResponse httpServletResponse){
-//        httpServletResponse.setContentType("application/json");
-//        httpServletResponse.setCharacterEncoding("UTF-8");
-//        httpServletResponse.setStatus(HttpServletResponse.SC_OK);
-//        return httpServletResponse;
-//    }
 
     @Autowired
     UserResponseHandler userResponseHandlerHandler;
@@ -38,5 +32,4 @@ public class RestAuthenticationSuccessHandler implements AuthenticationSuccessHa
         mapper.writerWithDefaultPrettyPrinter().writeValue(out, response);
         out.flush();
     };
-
 }
