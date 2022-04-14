@@ -10,6 +10,7 @@ import com.sparta.miniproject.repository.PostRepository;
 import com.sparta.miniproject.repository.UserRepository;
 import com.sparta.miniproject.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -19,7 +20,7 @@ public class CommentService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
 
-    public void createComment(Long postId, CommentRequestDto commentRequestDto, UserDetailsImpl userDetails) {
+    public void createComment(Long postId, CommentRequestDto commentRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         String comm = commentRequestDto.getComment();
         Post post = postRepository.findById(postId).orElseThrow(
@@ -30,12 +31,14 @@ public class CommentService {
         commentRepository.save(comment);
     }
 
-    public String deleteComment(Long commentId, UserDetailsImpl userDetails) {
-        com.sparta.miniproject.model.Comment comment = commentRepository.findById(commentId).orElseThrow(
+    public String deleteComment(Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
                 () -> new IllegalArgumentException("삭제할 댓글이 없습니다.")
         );
-//        if (comment.getUser().equals(userDetails.getUser().getUserId())) {
+        if (comment.getUser().getUsername().equals(userDetails.getUser().getUsername())) {
+            System.out.println("댓글 삭제 돌아가니?");
             commentRepository.deleteById(commentId);
-//        }
-    return "댓글 삭제 완료";}
+        }
+        return "댓글 삭제 완료";
+    }
 }

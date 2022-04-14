@@ -48,8 +48,15 @@ public class PostController {
 
     //게시글 수정
     @PutMapping("/posts/{postId}")
-    public String updatePost(@RequestBody ImageDto imageDto, @PathVariable Long postId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return postService.updatePost(imageDto, postId, userDetails);
+    public void updatePost(@RequestParam("title") String title,
+                           @RequestParam("content") String content,
+                           @RequestParam("location") String location,
+                           @RequestParam("file") MultipartFile imageUrl,
+                           @PathVariable Long postId,
+                           @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) throws Exception {
+        PostRequestDto postRequestDto = new PostRequestDto(title, content, location, imageUrl);
+        postService.updatePost(postRequestDto, "static", postId, userDetails);
     }
 
 }

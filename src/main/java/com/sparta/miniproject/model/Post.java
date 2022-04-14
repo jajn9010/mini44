@@ -33,7 +33,7 @@ public class Post extends Timestamped {
     @Column(nullable = false)
     private String location;
 
-    @Column(columnDefinition = "mediumblob")
+    @Column(nullable = false)
     private String imageUrl;
 
     @ManyToOne
@@ -48,14 +48,16 @@ public class Post extends Timestamped {
         this.content = imageDto.getContent();
         this.location = imageDto.getLocation();
         this.imageUrl = imageDto.getImageUrl();
-
+        this.user = imageDto.getUser();
     }
 
-    public void updatePost(ImageDto imageDto) {
+    public void updatePost(Long postId, ImageDto imageDto) {
+        this.postId = postId;
         this.title = imageDto.getTitle();
         this.content = imageDto.getContent();
         this.location = imageDto.getLocation();
         this.imageUrl = imageDto.getImageUrl();
+        this.user = imageDto.getUser();
     }
 
     public Post(PostResponseDto responseDto, User user) {

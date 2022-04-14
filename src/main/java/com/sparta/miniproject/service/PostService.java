@@ -14,6 +14,7 @@ import com.sparta.miniproject.repository.UserRepository;
 import com.sparta.miniproject.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -141,12 +142,21 @@ public class PostService {
     }
 
     @Transactional
-    public String updatePost(ImageDto imageDto, Long postId, UserDetailsImpl userDetails) {
+    public String updatePost(PostRequestDto postRequestDto, String dirName, Long postId, @AuthenticationPrincipal UserDetailsImpl userDetails) throws Exception {
         Post post = postRepository.findById(postId).orElseThrow(
                 ()-> new IllegalArgumentException("게시글이 존재하지 않습니다.")
         );
         if(post.getUser().getUsername().equals(userDetails.getUser().getUsername())) {
-            post.updatePost(imageDto);
+            File uploadFile = convert(postRequestDto.getImageUrl()).orElseThrow(
+                    () -> new IllegalArgumentException("이미지없어요!")
+            );
+            ImageDto imageDto = upload(uploadFile, dirName);
+            imageDto.setTitle(postRequestDto.getTitle());
+            imageDto.setContent(postRequestDto.getContent());
+            imageDto.setLocation(postRequestDto.getLocation());
+            imageDto.setUser(userDetails.getUser());
+
+            post.updatePost(postId, imageDto);
         }
         return "게시글 수정 완료";
     }

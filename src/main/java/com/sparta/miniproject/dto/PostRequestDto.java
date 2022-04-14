@@ -28,4 +28,11 @@ public class PostRequestDto {
         this.imageUrl = imageUrl;
         this.user = user;
     }
+
+    public PostRequestDto(String title, String content, String location, MultipartFile imageUrl) {
+        this.title = title;
+        this.content = content;
+        this. location = location;
+        this.imageUrl = imageUrl;
+    }
 }

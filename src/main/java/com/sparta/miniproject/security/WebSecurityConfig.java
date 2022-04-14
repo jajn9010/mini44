@@ -121,23 +121,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
     //cors
-//    @Bean
-//    public CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.addAllowedOrigin("http://localhost:3000");
-//        configuration.addAllowedOrigin("http://localhost:8080");
-//        configuration.addAllowedOrigin("http://192.168.219.100:8080");
-//        configuration.addAllowedOrigin("http://192.168.219.100:3000");
-//        configuration.addAllowedOrigin("http://54.180.90.59:3000");
-//        configuration.addAllowedOrigin("http://54.180.90.59:8080");
-//        configuration.addAllowedMethod("*");
-//        configuration.addAllowedHeader("*");
-//        configuration.addExposedHeader("Authorization");
-//
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", configuration);
-//        return source;
-//    }
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedOrigin("http://localhost:8080");
+        configuration.addAllowedOrigin("http://192.168.219.100:8080");
+        configuration.addAllowedOrigin("http://192.168.219.100:3000");
+        configuration.addAllowedOrigin("http://54.180.90.59:3000");
+        configuration.addAllowedOrigin("http://54.180.90.59:8080");
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedHeader("*");
+        configuration.addExposedHeader("Authorization");
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 
 //    @Bean
 //    @Override
@@ -204,7 +204,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("POST,/h2-console/**");
 
         // 회원 관리 API 허용
-        skipPathList.add("GET,/api/**");
         skipPathList.add("POST,/api/signup");
 
         //로그인관련 API 허용
@@ -212,10 +211,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("POST,/api/login");
 
         skipPathList.add("GET,/");
-        skipPathList.add("GET,/basic.js");
-
-        skipPathList.add("GET,/articles");
-        skipPathList.add("GET,/detail/{articleId}");
+        skipPathList.add("GET,/api/posts/**");
 
         skipPathList.add("GET,/favicon.ico");
 
