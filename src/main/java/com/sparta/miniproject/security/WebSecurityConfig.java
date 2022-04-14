@@ -1,15 +1,23 @@
 package com.sparta.miniproject.security;
 
+import com.sparta.miniproject.security.auth.FormLoginFilter;
+import com.sparta.miniproject.security.auth.FormLoginSuccessHandler;
+import com.sparta.miniproject.security.auth.JWTAuthProvider;
+import com.sparta.miniproject.security.auth.JwtAuthFilter;
+import com.sparta.miniproject.security.jwt.HeaderTokenExtractor;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -17,21 +25,27 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Configuration
-@AllArgsConstructor
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private RestAuthenticationFailureHandler restAuthenticationFailureHandler;
-    @Autowired
-    private RestAuthenticationSuccessHandler restAuthenticationSuccessHandler;
-    @Autowired
-    private RestLogoutSucccessHandler restLogoutSucccessHandler;
 
-//private final UserDetailsServiceImpl userDetailsService;
+    //private final UserDetailsServiceImpl userDetailsService;
+    private final JWTAuthProvider jwtAuthProvider;
+    private final HeaderTokenExtractor headerTokenExtractor;
+
+    public WebSecurityConfig(
+            JWTAuthProvider jwtAuthProvider,
+            HeaderTokenExtractor headerTokenExtractor
+    ) {
+        this.jwtAuthProvider = jwtAuthProvider;
+        this.headerTokenExtractor = headerTokenExtractor;
+    }
 
     @Bean
     public UserDetailsServiceImpl userDetailsService() {
@@ -43,10 +57,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public FormLoginAuthProvider formLoginAuthProvider() {
-        return new FormLoginAuthProvider((BCryptPasswordEncoder) encodePassword());
+    @Override
+    public void configure(AuthenticationManagerBuilder auth) {
+        auth
+                .authenticationProvider(formLoginAuthProvider())
+                .authenticationProvider(jwtAuthProvider);
     }
+
+//    @Bean
+//    public FormLoginAuthProvider formLoginAuthProvider() {
+//        return new FormLoginAuthProvider((BCryptPasswordEncoder) encodePassword());
+//    }
 
     @Override
     public void configure(WebSecurity web) {
@@ -62,8 +83,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .cors()
                 .configurationSource(corsConfigurationSource());
-        http.csrf().disable();
-        http.headers().frameOptions().disable();
+        http
+                .httpBasic().disable()
+                .csrf().disable()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+        http
+                .addFilterBefore(formLoginFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
 
 
 //        http.addFilterAt(getAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -75,18 +106,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/**", "/**/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .formLogin()
-//                .loginPage("/login")
-                .loginProcessingUrl("/api/login")
-                .usernameParameter("username")
-                .passwordParameter("password")
-                .successHandler(restAuthenticationSuccessHandler)
-                .failureHandler(restAuthenticationFailureHandler)
-                .permitAll()
-                .and()
+//                .formLogin()
+////                .loginPage("/login")
+//                .loginProcessingUrl("/api/login")
+//                .usernameParameter("username")
+//                .passwordParameter("password")
+//                .successHandler(restAuthenticationSuccessHandler)
+//                .failureHandler(restAuthenticationFailureHandler)
+//                .permitAll()
+//                .and()
                 .logout()
                 .logoutUrl("/api/logout")
-                .logoutSuccessHandler(restLogoutSucccessHandler)
                 .permitAll();
 
 
@@ -148,5 +178,71 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //        return authFilter;
 //
 //    }
+    @Bean
+    public FormLoginFilter formLoginFilter() throws Exception {
+        FormLoginFilter formLoginFilter = new FormLoginFilter(authenticationManager());
+        formLoginFilter.setFilterProcessesUrl("/api/login");
+        formLoginFilter.setAuthenticationSuccessHandler(formLoginSuccessHandler());
+        formLoginFilter.afterPropertiesSet();
+        return formLoginFilter;
+    }
+
+    @Bean
+    public FormLoginSuccessHandler formLoginSuccessHandler() {
+        return new FormLoginSuccessHandler();
+    }
+
+    @Bean
+    public FormLoginAuthProvider formLoginAuthProvider() {
+
+        return new FormLoginAuthProvider((BCryptPasswordEncoder) encodePassword());
+    }
+
+    private JwtAuthFilter jwtFilter() throws Exception {
+        List<String> skipPathList = new ArrayList<>();
+
+        // Static 정보 접근 허용
+        skipPathList.add("GET,/images/**");
+        skipPathList.add("GET,/css/**");
+
+        // h2-console 허용
+        skipPathList.add("GET,/h2-console/**");
+        skipPathList.add("POST,/h2-console/**");
+
+        // 회원 관리 API 허용
+        skipPathList.add("GET,/api/**");
+        skipPathList.add("POST,/api/signup");
+
+        //로그인관련 API 허용
+        skipPathList.add("GET,/user/loginCheck");
+        skipPathList.add("POST,/api/login");
+
+        skipPathList.add("GET,/");
+        skipPathList.add("GET,/basic.js");
+
+        skipPathList.add("GET,/articles");
+        skipPathList.add("GET,/detail/{articleId}");
+
+        skipPathList.add("GET,/favicon.ico");
+
+        FilterSkipMatcher matcher = new FilterSkipMatcher(
+                skipPathList,
+                "/**"
+        );
+
+        JwtAuthFilter filter = new JwtAuthFilter(
+                matcher,
+                headerTokenExtractor
+        );
+        filter.setAuthenticationManager(super.authenticationManagerBean());
+
+        return filter;
+    }
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
 
 }
